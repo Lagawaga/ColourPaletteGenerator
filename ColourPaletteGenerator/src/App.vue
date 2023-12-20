@@ -6,7 +6,7 @@
   <hr/>
   <ColourPanel v-if="colourGenerated" :colours=this.colourObj />
   
-  <button v-if="colourGenerated"  :disabled="paletteSaved" :style="{margin:'20px'}" class="primary-button" @click="showSaveBtn">{{paletteSaved ? 'Palette saved' : 'Save pallet?'}}</button>
+  <button v-if="colourGenerated"  :disabled="paletteSaved" :style="{margin:'20px'}" class="primary-button" @click="showSaveBtn">{{paletteSaved ? 'Palette saved' : 'Save pallete?'}}</button>
   <button :style="{margin:'20px'}" class="primary-button" @click="generateColours">Generate</button> 
   <form v-if="showSave" > 
     <label for="saveName">Enter a name: </label>
@@ -17,6 +17,7 @@
 
 <script>
 import ColourPanel from './components/ColourPanel.vue'
+import axios from 'axios';
 
 export default {
 
@@ -37,7 +38,8 @@ export default {
       enteredName: '',
       colourGenerated: false,
       paletteSaved: false,
-      showSave: false
+      showSave: false,
+      savedPalettes: {}
     }
   },
   components: {
@@ -66,7 +68,28 @@ export default {
       this.paletteSaved = true
       this.showSave = false
       console.log(this.colourObj)
+    },
+    loadData(data){
+      this.savedPalettes = data
+      console.log(this.savedPalettes)
     }
+  },
+  mounted(){
+    
+    axios.get('http://localhost:5015/api/ColourPalettes')
+    .then(function (response) {
+      // handle success
+      console.log(response.data);
+      this.loadData(response.data)
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .finally(function () {
+      console.log('Success!');
+      
+    });
   }
 }
 </script>
